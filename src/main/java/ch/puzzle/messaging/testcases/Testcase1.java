@@ -1,4 +1,4 @@
-package ch.puzzle.messaging.testcase1;
+package ch.puzzle.messaging.testcases;
 
 import org.jboss.ejb3.annotation.ResourceAdapter;
 import org.slf4j.Logger;
@@ -12,8 +12,11 @@ import javax.jms.*;
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "/jms/queue/queue-1"),
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "1"),
-        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Client-acknowledge")
+        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge")
 })
+/**
+ * Message must be still in the queue after read by client but with RuntimeException during TX.
+ */
 public class Testcase1 implements MessageListener {
     private final Logger logger = LoggerFactory.getLogger("Testcase#1");
 

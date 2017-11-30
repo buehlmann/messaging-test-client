@@ -359,8 +359,8 @@
                     <jms-queue name="Queue3">
                         <entry name="java:/jms/queue/queue-3"/>
                     </jms-queue>
-                    <jms-queue name="ReplyQueue3">
-                        <entry name="java:/jms/queue/reply-queue-3"/>
+                    <jms-queue name="Queue4">
+                        <entry name="java:/jms/queue/queue-4"/>
                     </jms-queue>
                 </jms-destinations>
             </hornetq-server>
@@ -460,10 +460,4 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
-
-    <deployments>
-        <deployment name="messaging-test-client" runtime-name="messaging-test-client.war">
-            <fs-exploded path="/home/bbuehlmann/projects/github/messaging-test-client/target/messaging-test-client"/>
-        </deployment>
-    </deployments>
 </server>

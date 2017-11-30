@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.jms.*;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,9 +18,11 @@ import java.util.List;
 import static javax.jms.Session.AUTO_ACKNOWLEDGE;
 
 @Path("/inspect")
-public class Inspector {
-    private final Logger logger = LoggerFactory.getLogger(Inspector.class);
+public class InspectorResource {
+    private final Logger logger = LoggerFactory.getLogger(InspectorResource.class);
 
+    @Inject
+    Prettifier prettifier;
     @Resource(lookup = "java:/JmsXA")
     ConnectionFactory connectionFactory;
 
@@ -39,7 +42,7 @@ public class Inspector {
             Enumeration e = browser.getEnumeration();
             while (e.hasMoreElements()) {
                 Object o = e.nextElement();
-                result.add(o.toString());
+                result.add(prettifier.toString((Message) o));
             }
             logger.info("Found {} elements in Queue {}", result.size(), queueName);
         } catch (JMSException e) {

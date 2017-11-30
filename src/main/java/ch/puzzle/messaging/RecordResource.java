@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import java.util.List;
 
 @Path("/records")
-public class RecordBoundary {
+public class RecordResource {
     @Inject
     RecordService service;
 

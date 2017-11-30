@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
 <server xmlns="urn:jboss:domain:5.0">
+
     <extensions>
         <extension module="org.jboss.as.clustering.infinispan"/>
         <extension module="org.jboss.as.connector"/>
@@ -34,6 +35,8 @@
         <extension module="org.wildfly.extension.undertow"/>
         <extension module="org.wildfly.iiop-openjdk"/>
     </extensions>
+
+
     <management>
         <security-realms>
             <security-realm name="ManagementRealm">
@@ -89,6 +92,7 @@
             </role-mapping>
         </access-control>
     </management>
+
     <profile>
         <subsystem xmlns="urn:jboss:domain:logging:3.0">
             <console-handler name="CONSOLE">
@@ -325,12 +329,10 @@
                     <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
                 </security-setting>
                 <address-setting name="#" dead-letter-address="jms.queue.DLQ" expiry-address="jms.queue.ExpiryQueue" max-size-bytes="10485760" page-size-bytes="2097152" message-counter-history-day-limit="10"/>
-
-                <address-setting name="jms.queue.Queue1" max-delivery-attempts="2" redelivery-delay="30000" dead-letter-address="jms.queue.DLQ"/>
-                <address-setting name="jms.queue.Queue2" max-delivery-attempts="10" redelivery-delay="1000" dead-letter-address="jms.queue.DLQ"/>
-                <address-setting name="jms.queue.Queue3" max-delivery-attempts="1" redelivery-delay="0" dead-letter-address="jms.queue.DLQ"/>
-                <address-setting name="jms.queue.Queue4" max-delivery-attempts="1" redelivery-delay="0" dead-letter-address="jms.queue.DLQ"/>
-
+                <address-setting name="jms.queue.Queue1" redelivery-delay="30000" max-delivery-attempts="2"/>
+                <address-setting name="jms.queue.Queue2" redelivery-delay="2000" max-delivery-attempts="5"/>
+                <address-setting name="jms.queue.Queue3" max-delivery-attempts="1"/>
+                <address-setting name="jms.queue.Queue4" redelivery-delay="30000" max-delivery-attempts="2"/>
                 <http-connector name="http-connector" socket-binding="http" endpoint="http-acceptor"/>
                 <http-connector name="http-connector-throughput" socket-binding="http" endpoint="http-acceptor-throughput">
                     <param name="batch-delay" value="50"/>
@@ -343,21 +345,18 @@
                     <param name="batch-delay" value="50"/>
                     <param name="direct-deliver" value="false"/>
                 </http-acceptor>
-                <in-vm-acceptor name="in-vm" server-id="0">
-                    <param name="buffer-pooling" value="false"/>
-                </in-vm-acceptor>
                 <remote-acceptor name="hornetq-acceptor" socket-binding="hornetq">
                     <param name="use-nio" value="true"/>
                 </remote-acceptor>
-
-                <jms-queue name="Queue1" entries="java:/jms/queue/queue-1" durable="true"/>
-                <jms-queue name="Queue2" entries="java:/jms/queue/queue-2" durable="true"/>
-                <jms-queue name="Queue3" entries="java:/jms/queue/queue-3" durable="true"/>
-                <jms-queue name="Queue4" entries="java:/jms/queue/queue-4" durable="true"/>
-
+                <in-vm-acceptor name="in-vm" server-id="0">
+                    <param name="buffer-pooling" value="false"/>
+                </in-vm-acceptor>
                 <jms-queue name="ExpiryQueue" entries="java:/jms/queue/ExpiryQueue"/>
                 <jms-queue name="DLQ" entries="java:/jms/queue/DLQ"/>
-
+                <jms-queue name="Queue1" entries="java:/jms/queue/queue-1"/>
+                <jms-queue name="Queue2" entries="java:/jms/queue/queue-2"/>
+                <jms-queue name="Queue3" entries="java:/jms/queue/queue-3"/>
+                <jms-queue name="Queue4" entries="java:/jms/queue/queue-4"/>
                 <connection-factory name="InVmConnectionFactory" entries="java:/ConnectionFactory" connectors="in-vm"/>
                 <connection-factory name="RemoteConnectionFactory" entries="java:jboss/exported/jms/RemoteConnectionFactory" connectors="http-connector"/>
                 <pooled-connection-factory name="activemq-ra" entries="java:/JmsXA java:jboss/DefaultJMSConnectionFactory" connectors="in-vm" transaction="xa" statistics-enabled="true"/>
@@ -383,12 +382,12 @@
         </subsystem>
         <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
             <providers>
-                <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
-                <provider-loader name="openssl" module="org.wildfly.openssl"/>
                 <aggregate-providers name="combined-providers">
                     <providers name="elytron"/>
                     <providers name="openssl"/>
                 </aggregate-providers>
+                <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                <provider-loader name="openssl" module="org.wildfly.openssl"/>
             </providers>
             <audit-logging>
                 <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
@@ -468,17 +467,17 @@
                         </mechanism>
                     </mechanism-configuration>
                 </sasl-authentication-factory>
-                <provider-sasl-server-factory name="global"/>
-                <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
-                    <filters>
-                        <filter provider-name="WildFlyElytron"/>
-                    </filters>
-                </mechanism-provider-filtering-sasl-server-factory>
                 <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
                     <properties>
                         <property name="wildfly.sasl.local-user.default-user" value="$local"/>
                     </properties>
                 </configurable-sasl-server-factory>
+                <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                    <filters>
+                        <filter provider-name="WildFlyElytron"/>
+                    </filters>
+                </mechanism-provider-filtering-sasl-server-factory>
+                <provider-sasl-server-factory name="global"/>
             </sasl>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:security:3.0">
@@ -558,6 +557,7 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:weld:4.0"/>
     </profile>
+
     <interfaces>
         <interface name="management">
             <inet-address value="${jboss.bind.address.management:127.0.0.1}"/>
@@ -569,6 +569,7 @@
             <inet-address value="${jboss.bind.address.unsecure:127.0.0.1}"/>
         </interface>
     </interfaces>
+
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
         <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:9990}"/>
         <socket-binding name="management-https" interface="management" port="${jboss.management.https.port:9993}"/>
