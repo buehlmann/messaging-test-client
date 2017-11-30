@@ -1,4 +1,4 @@
-package ch.puzzle.messaging.testcase2;
+package ch.puzzle.messaging.testcase1;
 
 
 import org.jboss.ejb3.annotation.ResourceAdapter;
@@ -15,7 +15,10 @@ import javax.jms.*;
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge")
 })
-public class Testcase2Listener implements MessageListener {
+/**
+ * Message must be still in the queue after read by client but with RuntimeException during TX.
+ */
+public class Testcase2 implements MessageListener {
     private final Logger logger = LoggerFactory.getLogger("Testcase#2");
 
     public void onMessage(Message message) {

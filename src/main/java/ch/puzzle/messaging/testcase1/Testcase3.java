@@ -1,4 +1,4 @@
-package ch.puzzle.messaging.testcase3;
+package ch.puzzle.messaging.testcase1;
 
 
 import ch.puzzle.messaging.RecordService;
@@ -16,7 +16,7 @@ import javax.jms.*;
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge")
 })
-public class Testcase3Listener implements MessageListener {
+public class Testcase3 implements MessageListener {
     @Resource(lookup = "java:/JmsXA")
     ConnectionFactory connectionFactory;
 
@@ -42,7 +42,7 @@ public class Testcase3Listener implements MessageListener {
             connection.start();
 
             MessageProducer producer = session.createProducer(replyQueue);
-            TextMessage textMessage = session.createTextMessage("Reply from Testcase1Listener MDB!");
+            TextMessage textMessage = session.createTextMessage("Reply from Testcase1 MDB!");
             producer.send(textMessage);
             System.out.println("Sent Message: " + textMessage);
 

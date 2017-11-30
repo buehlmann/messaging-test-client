@@ -14,7 +14,7 @@ import javax.jms.*;
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Client-acknowledge")
 })
-public class Testcase1Listener implements MessageListener {
+public class Testcase1 implements MessageListener {
     private final Logger logger = LoggerFactory.getLogger("Testcase#1");
 
     public void onMessage(Message message) {
