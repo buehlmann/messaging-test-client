@@ -274,6 +274,10 @@
                 <persistence-enabled>true</persistence-enabled>
                 <journal-type>NIO</journal-type>
                 <journal-min-files>2</journal-min-files>
+                <paging-directory path="/tmp/client64/paging"/>
+                <bindings-directory path="/tmp/client64/bindings"/>
+                <journal-directory path="/tmp/client64/journal"/>
+                <large-messages-directory path="/tmp/v/largemessages"/>
 
                 <connectors>
                     <netty-connector name="netty" socket-binding="messaging"/>
@@ -460,4 +464,10 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
+
+    <deployments>
+        <deployment name="messaging-test-client" runtime-name="messaging-test-client.war">
+            <fs-exploded path="/home/bbuehlmann/projects/github/messaging-test-client/target/messaging-test-client"/>
+        </deployment>
+    </deployments>
 </server>

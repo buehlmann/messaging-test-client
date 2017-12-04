@@ -325,6 +325,10 @@
         <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.1">
             <server name="default">
                 <security enabled="false"/>
+                <journal-directory path="/tmp/broker1/journal" />
+                <large-messages-directory path="/tmp/broker1/largemessages"/>
+                <bindings-directory path="/tmp/broker1/bindings"/>
+                <paging-directory path="/tmp/broker1/paging"/>
                 <security-setting name="#">
                     <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
                 </security-setting>

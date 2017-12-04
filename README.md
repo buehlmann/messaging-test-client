@@ -21,7 +21,8 @@ The destinations used by the tests must be created manually on the broker side.
     > $ ./jboss-cli.sh -c
     ```
 
-2. Execute the following commands in the CLI to create and configure the destinations
+2. Execute the following commands in the CLI to create and configure the destinations  
+    *JBoss EAP >= 7.0*
     ```
     jms-queue add --queue-address=Queue1 --entries=[java:/jms/queue/queue-1] --durable=true
     /subsystem=messaging-activemq/server=default/address-setting=jms.queue.Queue1/:add(redelivery-delay=30000,max-delivery-attempts=2)
@@ -33,6 +34,18 @@ The destinations used by the tests must be created manually on the broker side.
     /subsystem=messaging-activemq/server=default/address-setting=jms.queue.Queue4/:add(redelivery-delay=30000,max-delivery-attempts=2)
     
     ```
+    *JBoss EAP <= 7*  
+    ```
+    jms-queue add --queue-address=Queue1 --entries=[java:/jms/queue/queue-1] --durable=true
+    /subsystem=messaging/hornetq-server=default/address-setting=jms.queue.Queue1/:add(redelivery-delay=30000,max-delivery-attempts=2)
+    jms-queue add --queue-address=Queue2 --entries=[java:/jms/queue/queue-2] --durable=true
+    /subsystem=messaging/hornetq-server=default/address-setting=jms.queue.Queue2/:add(redelivery-delay=2000,max-delivery-attempts=5)
+    jms-queue add --queue-address=Queue3 --entries=[java:/jms/queue/queue-3] --durable=true
+    /subsystem=messaging/hornetq-server=default/address-setting=jms.queue.Queue3/:add(redelivery-delay=0,max-delivery-attempts=1)
+    jms-queue add --queue-address=Queue4 --entries=[java:/jms/queue/queue-4] --durable=true
+    /subsystem=messaging/hornetq-server=default/address-setting=jms.queue.Queue4/:add(redelivery-delay=30000,max-delivery-attempts=2)
+    ```
+    
 
 ## Example configuration
 Working standalone configs for Broker (EAP 7.1.Beta) and client (EAP 6.4)
